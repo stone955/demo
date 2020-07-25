@@ -7,11 +7,29 @@ fn main() {
 
     println!("----------statement block----------");
     {
-        let y: u32 = 20;
+        let y: u32 = 5;
         print_number_to(y);
     }
     // 会报错
     // println!("x is {}, y is {}", x, y);
+
+    // shadow
+    println!("----------shadow----------");
+
+    let a = 10;
+
+    {
+        let a = 20; // 只在语句块中生效
+        println!("block a is {}", a);
+    }
+
+    println!("a is {}", a);
+
+    let a = "A is string";
+    println!("a is {}", a);
+
+    let a = true;
+    println!("a is {}", a);
 }
 
 fn print_number_to(num: u32) {
