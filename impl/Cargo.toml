@@ -1,5 +1,5 @@
 [package]
-name = "oop"
+name = "impl"
 version = "0.1.0"
 authors = ["stone <335612970@qq.com>"]
 edition = "2018"
