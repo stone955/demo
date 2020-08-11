@@ -97,7 +97,11 @@ We call having references as function parameters borrowing.
 
 Mutable References
 
+Dangling References
 
+The Rules of References
+1.At any time, you can have either one mutable reference or any number of immutable references
+2.References must always be valid.
 */
 
 #![allow(unused_variables)]
@@ -186,6 +190,11 @@ fn main() {
         let mut s = String::from("hello");
 
         change_string(&mut s);
+
+        let mut s = String::from("hello");
+        let r1 = &mut s;
+        // let r2 = &mut s; // cannot borrow `s` as mutable more than once at a time
+        // println!("r1: {}, r2: {}", r1, r2);
     }
 }
 
