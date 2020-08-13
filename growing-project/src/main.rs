@@ -28,6 +28,8 @@ implementation detail and not available for outside use (private).
 */
 use restaurant::house::back_of_house;
 
+use rand::Rng;
+
 fn main() {
     // full path
     restaurant::house::front_of_house::add_to_waitlist();
@@ -41,4 +43,8 @@ fn main() {
     breakfast.toast = String::from("Ha");
 
     println!("Breakfast: {:?}", breakfast);
+
+    // extern crate
+    let rand_number = rand::thread_rng().gen_range(0, 100);
+    println!("Rand number {}", rand_number);
 }

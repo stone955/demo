@@ -8,3 +8,4 @@ version = "0.1.0"
 
 [dependencies]
 restaurant = {path = "./restaurant"}
+rand = "0.5"
