@@ -23,7 +23,9 @@ pub mod back_of_house {
 }
 
 pub mod front_of_house {
-    pub fn add_to_waitlist() {}
+    pub fn add_to_waitlist() -> bool {
+        true
+    }
 
     pub fn seat_at_table() {}
 
