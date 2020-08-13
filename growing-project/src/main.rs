@@ -1,5 +1,5 @@
 /**
-* 
+*
 Managing Growing Projects with Packages, Crates,and Modules
 
 Packages and Crates
@@ -26,7 +26,19 @@ implementation detail and not available for outside use (private).
 
 *
 */
+use restaurant::house::back_of_house;
 
 fn main() {
-    println!("Hello, world!");
+    // full path
+    restaurant::house::front_of_house::add_to_waitlist();
+    restaurant::house::front_of_house::seat_at_table();
+    restaurant::house::front_of_house::take_order();
+    restaurant::house::front_of_house::serve_order();
+    restaurant::house::front_of_house::take_payment();
+
+    // use shot path
+    let mut breakfast = back_of_house::Breakfast::summer("Rye");
+    breakfast.toast = String::from("Ha");
+
+    println!("Breakfast: {:?}", breakfast);
 }
