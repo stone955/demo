@@ -10,7 +10,14 @@ struct IpAddr {
     addr: String,
 }
 
+#[derive(Debug)]
+enum IPAddr {
+    V4(u8, u8, u8, u8),
+    V6(String),
+}
+
 fn main() {
+    // C 语言定义方法
     {
         let ip_v4 = IpAddrKind::V4;
         let ip_v6 = IpAddrKind::V6;
@@ -28,5 +35,14 @@ fn main() {
         };
 
         println!("Loopback is {:?}", loopback);
+    }
+
+    // Rust 推荐的方法
+    {
+        let ip_v4 = IPAddr::V4(192, 168, 1, 1);
+        println!("IPV4 is {:#?}", ip_v4);
+
+        let ip_v6 = IPAddr::V6(String::from("::1"));
+        println!("IPV6 is {:#?}", ip_v6);
     }
 }
