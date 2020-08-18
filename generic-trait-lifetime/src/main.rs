@@ -203,39 +203,33 @@ fn notify<T: Summary>(item: &T) {
 }
 
 // Specifying Multiple Trait Bounds with the + Syntax
-fn notifyAndDisplay<T: Summary + Display>(item: &T) {
+fn notify_and_display<T: Summary + Display>(item: &T) {
     println!("Breaking news! {}", item.summarize());
 }
 
-enum Type {
-    Tweet,
-    NewsArticle,
-}
-
-fn returns_summarizer(typ: Type) -> impl Summary {
-    match typ {
-        Tweet => {
-            Tweet {
-                username: String::from("horse_ebooks"),
-                content: String::from(
-                    "of course, as you probably already know, people",
-                ),
-                reply: false,
-                retweet: false,
-            }
+// traits as return value
+// but wouldn't work
+fn returns_summarizer(is_tweet: bool) -> impl Summary {
+    if is_tweet {
+        Tweet {
+            username: String::from("horse_ebooks"),
+            content: String::from(
+                "of course, as you probably already know, people",
+            ),
+            reply: false,
+            retweet: false,
         }
-        _ => {
-            NewsArticle {
-                headline: String::from(
-                    "Penguins win the Stanley Cup Championship!",
-                ),
-                location: String::from("Pittsburgh, PA, USA"),
-                author: String::from("stone"),
-                content: String::from(
-                    "The Pittsburgh Penguins once again are the best \
+    } else {
+        NewsArticle {
+            headline: String::from(
+                "Penguins win the Stanley Cup Championship!",
+            ),
+            location: String::from("Pittsburgh, PA, USA"),
+            author: String::from("stone"),
+            content: String::from(
+                "The Pittsburgh Penguins once again are the best \
                  hockey team in the NHL.",
-                ),
-            }
+            ),
         }
     }
 }
