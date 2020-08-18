@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 struct Point<T> {
     x: T,
     y: T,
@@ -13,6 +15,51 @@ impl<T> Point<T> {
     // fn get_distance_from_origin(&self) -> f32 {
     //     (self.x.powi(2) + self.x.powi(2)).sqrt()
     // }
+}
+
+trait Summary {
+    // fn summarize(&self) -> String;
+
+    // default implements
+    fn summarize(&self) -> String {
+        format!("(Read more from {}...)", self.summarize_author())
+    }
+
+    fn summarize_author(&self) -> String;
+}
+
+struct NewsArticle {
+    headline: String,
+    location: String,
+    author: String,
+    content: String,
+}
+
+impl Summary for NewsArticle {
+    // fn summarize(&self) -> String {
+    //     format!("{}, by {} ({})", self.headline, self.author, self.location)
+    // }
+
+    fn summarize_author(&self) -> String {
+        format!("@{}", self.author)
+    }
+}
+
+struct Tweet {
+    username: String,
+    content: String,
+    reply: bool,
+    retweet: bool,
+}
+
+impl Summary for Tweet {
+    fn summarize(&self) -> String {
+        format!("{}: {}", self.username, self.content)
+    }
+
+    fn summarize_author(&self) -> String {
+        format!("@{}", self.username)
+    }
 }
 
 fn main() {
@@ -81,6 +128,32 @@ fn main() {
 
         println!("The point's x: {}, y: {}", p.get_x(), p.get_y());
     }
+
+    // Traits: Defining Shared Behavior
+    println!("--------------------Traits: Defining Shared Behavior--------------------");
+    {
+        let tweet = Tweet {
+            username: String::from("stone"),
+            content: String::from("of course, as you probably already know, people"),
+            reply: false,
+            retweet: false,
+        };
+
+        println!("1 new tweet: {}", tweet.summarize());
+
+        let article = NewsArticle {
+            headline: String::from("oh!oh!oh!"),
+            content: String::from("of course, as you probably already know, people"),
+            author: String::from("stone"),
+            location: String::from("china"),
+        };
+
+        println!("1 new article: {}", article.summarize());
+
+        // traits as parameters
+        notify(&tweet);
+        notify(&article);
+    }
 }
 
 fn get_largest_i32(numbers: &[i32]) -> i32 {
@@ -117,4 +190,52 @@ fn get_largest<T: PartialOrd + Copy>(list: &[T]) -> T {
     }
 
     largest
+}
+
+// traits as parameters
+// fn notify(item: &impl Summary) {
+//     println!("Breaking news! {}", item.summarize());
+// }
+
+// trait bound syntax
+fn notify<T: Summary>(item: &T) {
+    println!("Breaking news! {}", item.summarize());
+}
+
+// Specifying Multiple Trait Bounds with the + Syntax
+fn notifyAndDisplay<T: Summary + Display>(item: &T) {
+    println!("Breaking news! {}", item.summarize());
+}
+
+enum Type {
+    Tweet,
+    NewsArticle,
+}
+
+fn returns_summarizer(typ: Type) -> impl Summary {
+    match typ {
+        Tweet => {
+            Tweet {
+                username: String::from("horse_ebooks"),
+                content: String::from(
+                    "of course, as you probably already know, people",
+                ),
+                reply: false,
+                retweet: false,
+            }
+        }
+        _ => {
+            NewsArticle {
+                headline: String::from(
+                    "Penguins win the Stanley Cup Championship!",
+                ),
+                location: String::from("Pittsburgh, PA, USA"),
+                author: String::from("stone"),
+                content: String::from(
+                    "The Pittsburgh Penguins once again are the best \
+                 hockey team in the NHL.",
+                ),
+            }
+        }
+    }
 }
