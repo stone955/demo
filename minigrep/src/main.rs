@@ -16,7 +16,11 @@ fn main() {
 
 
     // Grouping Configuration Values
-    let parameter = parse_parameter(&args);
+    // let parameter = parse_parameter(&args);
+    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+
+    // Creating a Constructor for Config
+    let parameter = Parameter::new(&args);
     println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // read file
@@ -33,6 +37,18 @@ struct Parameter {
     filename: String,
 }
 
+impl Parameter {
+    // Creating a Constructor for Parameter
+    fn new(args: &[String]) -> Parameter {
+        let query = args[1].clone();
+        let filename = args[2].clone();
+        Parameter {
+            query,
+            filename,
+        }
+    }
+}
+
 // fn parse_arguments(args: &[String]) -> (&str, &str) {
 //     // saving the argument values in variables
 //     let query = &args[1];
@@ -40,12 +56,12 @@ struct Parameter {
 //     (query, filename)
 // }
 
-fn parse_parameter(args: &[String]) -> Parameter {
-    // saving the argument values in variables
-    let query = args[1].clone();
-    let filename = args[2].clone();
-    Parameter {
-        query,
-        filename,
-    }
-}
+// fn parse_parameter(args: &[String]) -> Parameter {
+//     // saving the argument values in variables
+//     let query = args[1].clone();
+//     let filename = args[2].clone();
+//     Parameter {
+//         query,
+//         filename,
+//     }
+// }
