@@ -43,13 +43,13 @@ fn main() {
 
     // Splitting Code into a Library Crate
     let parameter = minigrep::Parameter::new(&args).unwrap_or_else(|err| {
-        println!("Failed to parse arguments: {}", err);
+        eprintln!("Failed to parse arguments: {}", err);
         process::exit(1);
     });
     println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     if let Err(err) = minigrep::run(parameter) {
-        println!("Failed to run: {}", err);
+        eprintln!("Failed to run: {}", err);
         process::exit(1);
     }
 
