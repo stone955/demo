@@ -1,0 +1,6 @@
+The Args: ["target\\debug\\minigrep.exe", "to", "example.txt"]
+Searching for to, in file example.txt
+Are you nobody, too?,
+How dreary to be somebody!,
+To tell your name the livelong day,
+To an admiring bog!,
