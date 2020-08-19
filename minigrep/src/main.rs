@@ -2,6 +2,7 @@
 
 use std::env;
 use std::fs;
+use std::process;
 
 fn main() {
     // reading the argument values
@@ -20,7 +21,14 @@ fn main() {
     // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // Creating a Constructor for Config
-    let parameter = Parameter::new(&args);
+    // let parameter = Parameter::new(&args);
+    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+
+    // Returning a Result from new Instead of Calling panic!
+    let parameter = Parameter::new(&args).unwrap_or_else(|err| {
+        println!("Failed to parse arguments: {}", err);
+        process::exit(1);
+    });
     println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // read file
@@ -39,16 +47,29 @@ struct Parameter {
 
 impl Parameter {
     // Creating a Constructor for Parameter
-    fn new(args: &[String]) -> Parameter {
+    // fn new(args: &[String]) -> Parameter {
+    //     if args.len() < 3 {
+    //         panic!("not enough arguments");
+    //     }
+    //     let query = args[1].clone();
+    //     let filename = args[2].clone();
+    //     Parameter {
+    //         query,
+    //         filename,
+    //     }
+    // }
+
+    // Returning a Result from new Instead of Calling panic!
+    fn new(args: &[String]) -> Result<Parameter, &'static str> {
         if args.len() < 3 {
-            panic!("not enough arguments");
+            return Err("not enough arguments");
         }
         let query = args[1].clone();
         let filename = args[2].clone();
-        Parameter {
+        Ok(Parameter {
             query,
             filename,
-        }
+        })
     }
 }
 
