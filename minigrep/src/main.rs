@@ -3,6 +3,7 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::error::Error;
 
 fn main() {
     // reading the argument values
@@ -32,9 +33,15 @@ fn main() {
     println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // read file
-    let contents = fs::read_to_string(parameter.filename).expect("Failed to read the file");
+    // let contents = fs::read_to_string(parameter.filename).expect("Failed to read the file");
+    // println!("Text: \n{}", contents);
 
-    println!("Text: \n{}", contents);
+    // Extracting Logic from main
+    // Returning Errors from the run Function
+    if let Err(err) = run(parameter) {
+        println!("Failed to run: {}", err);
+        process::exit(1);
+    }
 
     // This pattern is about separating concerns: main.rs handles running the program,
     // and lib.rs handles all the logic of the task at hand
@@ -89,3 +96,12 @@ impl Parameter {
 //         filename,
 //     }
 // }
+
+// Box<dyn Error> means the function will return a type that implements the Error trait,
+// but we don’t have to specify what particular type the return value will be.
+// The dyn keyword is short for “dynamic.”
+fn run(parameter: Parameter) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(parameter.filename)?;
+    println!("Text: \n{}", contents);
+    Ok(())
+}
