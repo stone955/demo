@@ -1,9 +1,7 @@
 // cargo run {search string} {example-filename}.txt
 
 use std::env;
-use std::fs;
 use std::process;
-use std::error::Error;
 
 fn main() {
     // reading the argument values
@@ -26,11 +24,11 @@ fn main() {
     // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // Returning a Result from new Instead of Calling panic!
-    let parameter = Parameter::new(&args).unwrap_or_else(|err| {
-        println!("Failed to parse arguments: {}", err);
-        process::exit(1);
-    });
-    println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+    // let parameter = Parameter::new(&args).unwrap_or_else(|err| {
+    //     println!("Failed to parse arguments: {}", err);
+    //     process::exit(1);
+    // });
+    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
     // read file
     // let contents = fs::read_to_string(parameter.filename).expect("Failed to read the file");
@@ -38,7 +36,19 @@ fn main() {
 
     // Extracting Logic from main
     // Returning Errors from the run Function
-    if let Err(err) = run(parameter) {
+    // if let Err(err) = run(parameter) {
+    //     println!("Failed to run: {}", err);
+    //     process::exit(1);
+    // }
+
+    // Splitting Code into a Library Crate
+    let parameter = minigrep::Parameter::new(&args).unwrap_or_else(|err| {
+        println!("Failed to parse arguments: {}", err);
+        process::exit(1);
+    });
+    println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+
+    if let Err(err) = minigrep::run(parameter) {
         println!("Failed to run: {}", err);
         process::exit(1);
     }
@@ -47,38 +57,38 @@ fn main() {
     // and lib.rs handles all the logic of the task at hand
 }
 
-struct Parameter {
-    query: String,
-    filename: String,
-}
+// struct Parameter {
+//     query: String,
+//     filename: String,
+// }
 
-impl Parameter {
-    // Creating a Constructor for Parameter
-    // fn new(args: &[String]) -> Parameter {
-    //     if args.len() < 3 {
-    //         panic!("not enough arguments");
-    //     }
-    //     let query = args[1].clone();
-    //     let filename = args[2].clone();
-    //     Parameter {
-    //         query,
-    //         filename,
-    //     }
-    // }
-
-    // Returning a Result from new Instead of Calling panic!
-    fn new(args: &[String]) -> Result<Parameter, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-        let query = args[1].clone();
-        let filename = args[2].clone();
-        Ok(Parameter {
-            query,
-            filename,
-        })
-    }
-}
+// impl Parameter {
+//     // Creating a Constructor for Parameter
+//     // fn new(args: &[String]) -> Parameter {
+//     //     if args.len() < 3 {
+//     //         panic!("not enough arguments");
+//     //     }
+//     //     let query = args[1].clone();
+//     //     let filename = args[2].clone();
+//     //     Parameter {
+//     //         query,
+//     //         filename,
+//     //     }
+//     // }
+//
+//     // Returning a Result from new Instead of Calling panic!
+//     fn new(args: &[String]) -> Result<Parameter, &'static str> {
+//         if args.len() < 3 {
+//             return Err("not enough arguments");
+//         }
+//         let query = args[1].clone();
+//         let filename = args[2].clone();
+//         Ok(Parameter {
+//             query,
+//             filename,
+//         })
+//     }
+// }
 
 // fn parse_arguments(args: &[String]) -> (&str, &str) {
 //     // saving the argument values in variables
@@ -100,8 +110,8 @@ impl Parameter {
 // Box<dyn Error> means the function will return a type that implements the Error trait,
 // but we don’t have to specify what particular type the return value will be.
 // The dyn keyword is short for “dynamic.”
-fn run(parameter: Parameter) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(parameter.filename)?;
-    println!("Text: \n{}", contents);
-    Ok(())
-}
+// fn run(parameter: Parameter) -> Result<(), Box<dyn Error>> {
+//     let contents = fs::read_to_string(parameter.filename)?;
+//     println!("Text: \n{}", contents);
+//     Ok(())
+// }
