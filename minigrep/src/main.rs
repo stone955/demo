@@ -40,6 +40,9 @@ struct Parameter {
 impl Parameter {
     // Creating a Constructor for Parameter
     fn new(args: &[String]) -> Parameter {
+        if args.len() < 3 {
+            panic!("not enough arguments");
+        }
         let query = args[1].clone();
         let filename = args[2].clone();
         Parameter {
