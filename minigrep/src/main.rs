@@ -4,53 +4,73 @@ use std::env;
 use std::process;
 
 fn main() {
-    // reading the argument values
-    let args: Vec<String> = env::args().collect();
+    {
+        // reading the argument values
+        let args: Vec<String> = env::args().collect();
 
-    println!("The Args: {:?}", args);
+        println!("The Args: {:?}", args);
 
-    // [Output] The Args: ["target\\debug\\minigrep.exe", "searchstring", "example-filename.txt"]
+        // [Output] The Args: ["target\\debug\\minigrep.exe", "searchstring", "example-filename.txt"]
 
-    // let (query, filename) = parse_arguments(&args);
-    // println!("Searching for {}, in file {}", query, filename);
+        // let (query, filename) = parse_arguments(&args);
+        // println!("Searching for {}, in file {}", query, filename);
 
 
-    // Grouping Configuration Values
-    // let parameter = parse_parameter(&args);
-    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+        // Grouping Configuration Values
+        // let parameter = parse_parameter(&args);
+        // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
-    // Creating a Constructor for Config
-    // let parameter = Parameter::new(&args);
-    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+        // Creating a Constructor for Config
+        // let parameter = Parameter::new(&args);
+        // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
-    // Returning a Result from new Instead of Calling panic!
-    // let parameter = Parameter::new(&args).unwrap_or_else(|err| {
-    //     println!("Failed to parse arguments: {}", err);
-    //     process::exit(1);
-    // });
-    // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+        // Returning a Result from new Instead of Calling panic!
+        // let parameter = Parameter::new(&args).unwrap_or_else(|err| {
+        //     println!("Failed to parse arguments: {}", err);
+        //     process::exit(1);
+        // });
+        // println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
-    // read file
-    // let contents = fs::read_to_string(parameter.filename).expect("Failed to read the file");
-    // println!("Text: \n{}", contents);
+        // read file
+        // let contents = fs::read_to_string(parameter.filename).expect("Failed to read the file");
+        // println!("Text: \n{}", contents);
 
-    // Extracting Logic from main
-    // Returning Errors from the run Function
-    // if let Err(err) = run(parameter) {
-    //     println!("Failed to run: {}", err);
-    //     process::exit(1);
-    // }
+        // Extracting Logic from main
+        // Returning Errors from the run Function
+        // if let Err(err) = run(parameter) {
+        //     println!("Failed to run: {}", err);
+        //     process::exit(1);
+        // }
 
-    // Splitting Code into a Library Crate
-    let parameter = minigrep::Parameter::new(&args).unwrap_or_else(|err| {
-        eprintln!("Failed to parse arguments: {}", err);
-        process::exit(1);
-    });
-    println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+        // Splitting Code into a Library Crate
+        let parameter = minigrep::Parameter::new(&args).unwrap_or_else(|err| {
+            eprintln!("Failed to parse arguments: {}", err);
+            process::exit(1);
+        });
+        println!("Searching for {}, in file {}", parameter.query, parameter.filename);
 
-    if let Err(err) = minigrep::run(parameter) {
-        eprintln!("Failed to run: {}", err);
-        process::exit(1);
+        if let Err(err) = minigrep::run(parameter) {
+            eprintln!("Failed to run: {}", err);
+            process::exit(1);
+        }
+    }
+
+
+    // Using the Returned Iterator Directly
+    {
+        println!("-------------------- Using the Returned Iterator Directly --------------------");
+
+        let parameter = minigrep::Parameter::build(env::args()).unwrap_or_else(|err: &str| {
+            eprintln!("Failed to parse arguments: {}", err);
+            process::exit(1);
+        });
+
+        println!("Searching for {}, in file {}", parameter.query, parameter.filename);
+
+        if let Err(err) = minigrep::run(parameter) {
+            eprintln!("Failed to run: {}", err);
+            process::exit(1);
+        }
     }
 
     // This pattern is about separating concerns: main.rs handles running the program,

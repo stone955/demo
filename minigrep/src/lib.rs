@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fs;
 use std::env;
+use std::env::Args;
 
 pub struct Parameter {
     pub query: String,
@@ -16,6 +17,30 @@ impl Parameter {
         }
         let query = args[1].clone();
         let filename = args[2].clone();
+        let case_sensitive = env::var("CASE_SENSITIVE").is_err();
+
+        Ok(Parameter {
+            query,
+            filename,
+            case_sensitive,
+        })
+    }
+
+    // Removing a clone Using an Iterator
+    pub fn build(mut args: Args) -> Result<Parameter, &'static str> {
+        // skip the name of program
+        args.next();
+
+        let query = match args.next() {
+            Some(query) => query,
+            None => return Err("Query string not found"),
+        };
+
+        let filename = match args.next() {
+            Some(filename) => filename,
+            None => return Err("Filename string not found")
+        };
+
         let case_sensitive = env::var("CASE_SENSITIVE").is_err();
 
         Ok(Parameter {
@@ -44,24 +69,33 @@ pub fn run(parameter: Parameter) -> Result<(), Box<dyn Error>> {
 }
 
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
+    // let mut results = Vec::new();
+    // for line in contents.lines() {
+    //     if line.contains(query) {
+    //         results.push(line);
+    //     }
+    // }
+    // results
+
+    // Making Code Clearer with Iterator Adaptors
+    contents.lines().filter(|line| {
+        line.contains(query)
+    }).collect()
 }
 
 fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let query = query.to_lowercase();
-    let mut results = Vec::new();
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line);
-        }
-    }
-    results
+    // let mut results = Vec::new();
+    // for line in contents.lines() {
+    //     if line.to_lowercase().contains(&query.to_lowercase()) {
+    //         results.push(line);
+    //     }
+    // }
+    // results
+
+    // Making Code Clearer with Iterator Adaptors
+    contents.lines().filter(|line| {
+        line.to_lowercase().contains(&query.to_lowercase())
+    }).collect()
 }
 
 #[cfg(test)]
