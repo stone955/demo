@@ -10,6 +10,7 @@
 
 use std::thread;
 use std::time::Duration;
+use std::collections::HashMap;
 
 fn simulated_expensive_calculation(intensity: u32) -> u32 {
     println!("calculating slowly...");
@@ -68,20 +69,38 @@ fn generate_workout(intensity: u32, random_number: u32) {
     // }
 
     // Storing Closures Using Generic Parameters and the Fn Traits
+    // {
+    //     let mut cache_holder = CacheHolder::new(|num: u32| -> u32{
+    //         println!("calculating very slowly...");
+    //         thread::sleep(Duration::from_secs(2));
+    //         num * 5
+    //     });
+    //     if intensity < 25 {
+    //         println!("Today, do {} push!", cache_holder.get_value(intensity));
+    //         println!("Next, do {} sit!", cache_holder.get_value(intensity));
+    //     } else {
+    //         if random_number == 3 {
+    //             println!("Take a break today! Remember to stay hydrated!");
+    //         } else {
+    //             println!("Today, run for {} minutes!", cache_holder.get_value(intensity));
+    //         }
+    //     }
+    // }
+
     {
-        let mut cache_holder = CacheHolder::new(|num: u32| -> u32{
+        let mut hashmap_cache_holder = HashMapCacheHolder::new(|num: u32| -> u32{
             println!("calculating very slowly...");
             thread::sleep(Duration::from_secs(2));
             num * 5
         });
         if intensity < 25 {
-            println!("Today, do {} push!", cache_holder.value(intensity));
-            println!("Next, do {} sit!", cache_holder.value(intensity));
+            println!("Today, do {} push!", hashmap_cache_holder.get_value(intensity));
+            println!("Next, do {} sit!", hashmap_cache_holder.get_value(intensity));
         } else {
             if random_number == 3 {
                 println!("Take a break today! Remember to stay hydrated!");
             } else {
-                println!("Today, run for {} minutes!", cache_holder.value(intensity));
+                println!("Today, run for {} minutes!", hashmap_cache_holder.get_value(intensity));
             }
         }
     }
@@ -106,12 +125,43 @@ impl<T> CacheHolder<T>
         }
     }
 
-    fn value(&mut self, arg: u32) -> u32 {
+    fn get_value(&mut self, arg: u32) -> u32 {
         match self.value {
             Some(v) => v,
             None => {
                 let v = (self.calculation)(arg);
                 self.value = Some(v);
+                v
+            }
+        }
+    }
+}
+
+// HashMapCacheHolder<T> struct that holds a closure and an optional result value
+struct HashMapCacheHolder<T>
+    where T: Fn(u32) -> u32,
+{
+    calculation: T,
+    values: HashMap<u32, u32>,
+}
+
+//
+impl<T> HashMapCacheHolder<T>
+    where T: Fn(u32) -> u32,
+{
+    fn new(calculation: T) -> HashMapCacheHolder<T> {
+        HashMapCacheHolder {
+            calculation,
+            values: HashMap::new(),
+        }
+    }
+
+    fn get_value(&mut self, arg: u32) -> u32 {
+        match self.values.get(&arg) {
+            Some(v) => *v,
+            None => {
+                let v = (self.calculation)(arg);
+                self.values.insert(arg, v);
                 v
             }
         }
@@ -131,12 +181,12 @@ fn main() {
 
 #[test]
 fn call_with_different_values() {
-    let mut c = CacheHolder::new(|x: u32| -> u32{
+    let mut hashmap_cache_holder = HashMapCacheHolder::new(|x: u32| -> u32{
         x
     });
 
-    let v1 = c.value(1);
-    let v2 = c.value(2);
+    let _ = hashmap_cache_holder.get_value(1);
+    let v2 = hashmap_cache_holder.get_value(2);
 
     assert_eq!(v2, 2);
 }
