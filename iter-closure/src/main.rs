@@ -177,6 +177,8 @@ fn main() {
 
         generate_workout(simulated_user_specified_value, simulated_random_number);
     }
+
+    // Comparing Performance: Loops vs. Iterators
 }
 
 #[test]
