@@ -48,21 +48,71 @@ fn generate_workout(intensity: u32, random_number: u32) {
     // }
 
     // Using closures to store code, but still calls expensive_closure twice
+    // {
+    //     let expensive_closure = |num: u32| -> u32 {
+    //         println!("calculating very slowly...");
+    //         thread::sleep(Duration::from_secs(2));
+    //         num * 3
+    //     };
+    //
+    //     if intensity < 25 {
+    //         println!("Today, do {} push!", expensive_closure(intensity));
+    //         println!("Next, do {} sit!", expensive_closure(intensity));
+    //     } else {
+    //         if random_number == 3 {
+    //             println!("Take a break today! Remember to stay hydrated!");
+    //         } else {
+    //             println!("Today, run for {} minutes!", expensive_closure(intensity));
+    //         }
+    //     }
+    // }
+
+    // Storing Closures Using Generic Parameters and the Fn Traits
     {
-        let expensive_closure = |num: u32| -> u32 {
+        let mut cache_holder = CacheHolder::new(|num: u32| -> u32{
             println!("calculating very slowly...");
             thread::sleep(Duration::from_secs(2));
-            num * 3
-        };
-
+            num * 5
+        });
         if intensity < 25 {
-            println!("Today, do {} push!", expensive_closure(intensity));
-            println!("Next, do {} sit!", expensive_closure(intensity));
+            println!("Today, do {} push!", cache_holder.value(intensity));
+            println!("Next, do {} sit!", cache_holder.value(intensity));
         } else {
             if random_number == 3 {
                 println!("Take a break today! Remember to stay hydrated!");
             } else {
-                println!("Today, run for {} minutes!", expensive_closure(intensity));
+                println!("Today, run for {} minutes!", cache_holder.value(intensity));
+            }
+        }
+    }
+}
+
+// CacheHolder<T> struct that holds a closure and an optional result value
+struct CacheHolder<T>
+    where T: Fn(u32) -> u32,
+{
+    calculation: T,
+    value: Option<u32>,
+}
+
+//
+impl<T> CacheHolder<T>
+    where T: Fn(u32) -> u32,
+{
+    fn new(calculation: T) -> CacheHolder<T> {
+        CacheHolder {
+            calculation,
+            value: None,
+        }
+    }
+
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.value {
+            Some(v) => v,
+            None => {
+                let v = (self.calculation)(arg);
+                self.value = Some(v);
+                v
             }
         }
     }
@@ -77,6 +127,18 @@ fn main() {
 
         generate_workout(simulated_user_specified_value, simulated_random_number);
     }
+}
+
+#[test]
+fn call_with_different_values() {
+    let mut c = CacheHolder::new(|x: u32| -> u32{
+        x
+    });
+
+    let v1 = c.value(1);
+    let v2 = c.value(2);
+
+    assert_eq!(v2, 2);
 }
 
 
